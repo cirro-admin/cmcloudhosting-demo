@@ -15,8 +15,8 @@ Runtime: **`node`**
 | Branch | `main` |
 | Subdirectory | `node` |
 | Runtime | `node` |
-| Build command | `npm ci --omit=dev` |
-| Start command | `npm start` |
+| Build command | _(leave empty — dependencies are installed for you)_ |
+| Start command | _(leave empty — the `start` script in `package.json` is used)_ |
 | Health check path | `/_runtime/health` |
 
 3. Deploy, then open the app URL. Add a couple of entries, then redeploy: they are gone. The list lives in the process, which is exactly why durable state belongs in a managed database service.

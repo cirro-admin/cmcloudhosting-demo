@@ -15,8 +15,8 @@ Runtime: **`python_fastapi`**
 | Branch | `main` |
 | Subdirectory | `python-fastapi` |
 | Runtime | `python_fastapi` |
-| Build command | `venv/bin/pip install -r requirements.txt` |
-| Start command | `venv/bin/uvicorn app:app --host 127.0.0.1 --port $PORT` |
+| Build command | _(leave empty — the venv and `requirements.txt` are installed for you)_ |
+| Start command | _(leave empty — uvicorn is started on your `FastAPI()` app for you)_ |
 | Health check path | `/_runtime/health` |
 
 3. Deploy, then open the app URL. Add a couple of entries, then redeploy: they are gone. The list lives in the process, which is exactly why durable state belongs in a managed database service.

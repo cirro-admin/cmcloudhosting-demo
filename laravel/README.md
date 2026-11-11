@@ -1,6 +1,6 @@
 # CM Cloud PHP starter
 
-A small PHP app that exists to show the deployment path working, end to end. PHP-FPM runs under this app's own user account, with nginx serving `public/` as the document root — the same layout Laravel expects.
+A small PHP app that exists to show the deployment path working, end to end. PHP serves it under this app's own user account, with `public/` as the document root — the same layout Laravel expects — and nginx in front.
 
 Runtime: **`laravel`**
 
@@ -15,8 +15,8 @@ Runtime: **`laravel`**
 | Branch | `main` |
 | Subdirectory | `laravel` |
 | Runtime | `laravel` |
-| Build command | _(leave empty — or `composer install --no-dev` for a real Laravel app)_ |
-| Start command | _(leave empty — PHP-FPM is managed for you)_ |
+| Build command | _(leave empty — `composer install --no-dev` runs for you when there is a `composer.json`)_ |
+| Start command | _(leave empty — the server is started for you)_ |
 | Health check path | `/_runtime/health` |
 
 3. Deploy, then open the app URL. Nothing it returns is stored: PHP shares nothing between requests, so durable state needs a managed database service.
