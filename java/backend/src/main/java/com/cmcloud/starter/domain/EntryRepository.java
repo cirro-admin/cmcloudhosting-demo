@@ -1,0 +1,11 @@
+package com.cmcloud.starter.domain;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface EntryRepository extends JpaRepository<Entry, Long> {
+
+    /** id breaks ties, so rows inserted in the same transaction keep a stable order. */
+    List<Entry> findAllByOrderByCreatedAtDescIdDesc();
+}

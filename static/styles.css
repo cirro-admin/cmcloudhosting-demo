@@ -1,0 +1,14 @@
+:root { color-scheme: dark; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: #111827;
+  color: #d1fae5;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+main { max-width: 720px; padding: 40px; }
+h1 { margin: 0 0 8px; font-size: 34px; }
+p, li { line-height: 1.65; }
+code { background: #0f766e; padding: 2px 6px; border-radius: 5px; }

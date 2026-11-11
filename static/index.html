@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CM Cloud static starter</title>
+<link rel="stylesheet" href="styles.css">
+<main>
+  <h1>Static starter</h1>
+  <p>Files served straight from this release by nginx on the CM Cloud
+     <code>static</code> runtime. There is no application process, so there is
+     nothing to start and nothing to crash.</p>
+  <ol>
+    <li>Look at the URL bar — this release is live on your app subdomain with TLS
+        already in front of it.</li>
+    <li>Push a repository holding your built site. The platform looks for
+        <code>index.html</code> in <code>dist/</code>, <code>build/</code>,
+        <code>out/</code> or <code>public/</code>, so a Vite or Next export needs no
+        configuration.</li>
+    <li>Redeploy and watch the swap — the new release goes live and the previous one
+        retires, with a rollback available.</li>
+    <li>There are no runtime environment variables here. Everything shipped in a static
+        release is public, so secrets must stay out of the bundle.</li>
+    <li>Need an API or a database? That is a service of its own — add a managed
+        PostgreSQL or Pocketbase Backend service and call it from the browser.</li>
+  </ol>
+</main>

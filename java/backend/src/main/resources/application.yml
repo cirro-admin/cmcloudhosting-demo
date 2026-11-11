@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: starter
+
+  datasource:
+    # Everything comes from the environment. Nothing about a particular database
+    # is baked into the jar, so the same artefact runs against a laptop Postgres
+    # and against CM Cloud managed Postgres.
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      # pgbouncer in transaction mode hands a different server connection to each
+      # transaction, so a large client-side pool buys nothing and just holds
+      # pooler slots. Keep it small.
+      maximum-pool-size: ${DB_POOL_SIZE:8}
+      minimum-idle: 2
+      connection-timeout: 10000
+
+  jpa:
+    # Flyway owns the schema. Hibernate only checks that what it expects is there.
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+server:
+  port: ${PORT:11001}
+  shutdown: graceful
+  forward-headers-strategy: native
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      # The deploy script waits on this, so it needs to say whether the database
+      # is reachable, not just whether the JVM came up.
+      show-details: when-authorized
+
+starter:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:}
+
+logging:
+  level:
+    root: INFO
+    com.cmcloud.starter: INFO

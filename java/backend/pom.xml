@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.3.4</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.cmcloud</groupId>
+  <artifactId>starter</artifactId>
+  <version>1.0.0</version>
+  <name>CM Cloud Java Starter</name>
+  <description>Spring Boot, Vue and managed PostgreSQL wired together on CM Cloud</description>
+
+  <properties>
+    <!-- The frontend lives beside this module in the repo, so the path is
+         relative to the POM and works from a clone at any location. -->
+    <frontend.dir>${project.basedir}/../frontend</frontend.dir>
+    <skip.frontend>false</skip.frontend>
+    <java.version>21</java.version>
+    <!-- Managed PostgreSQL runs 17. The Flyway version Boot 3.3 pins only claims
+         support up to 16 and logs a warning on every start, which is noise in
+         front of a customer. -->
+    <flyway.version>10.22.0</flyway.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- Fixed name so the systemd unit can hard-code target/starter.jar and
+         never has to guess a version-stamped filename after an upgrade. -->
+    <finalName>starter</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- Build the Vue bundle and put it INSIDE the jar, so one `mvn package`
+           produces a single artefact that serves both the UI and the API from
+           one origin.
+
+           Why this is needed rather than nice: the frontend calls /api/... as a
+           RELATIVE path. Served from a different host than the jar, every call
+           would go to the frontend's own host and 404 — and CORS cannot help,
+           because a relative path never leaves that host. On a Managed Java VM
+           nginx served both from one origin; on the App Deployment runtime the
+           app is one process behind one hostname, so the jar has to carry the
+           UI itself.
+
+           Skip it with -Dskip.frontend=true when you only want the API, or when
+           building somewhere without npm. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>frontend-install</id>
+            <phase>generate-resources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <!-- `npm ci` honours the lockfile; `install` would silently
+                   resolve newer versions than the ones this was tested with. -->
+              <arguments><argument>ci</argument></arguments>
+              <workingDirectory>${frontend.dir}</workingDirectory>
+              <skip>${skip.frontend}</skip>
+            </configuration>
+          </execution>
+          <execution>
+            <id>frontend-build</id>
+            <phase>generate-resources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <arguments>
+                <argument>run</argument>
+                <argument>build</argument>
+              </arguments>
+              <workingDirectory>${frontend.dir}</workingDirectory>
+              <skip>${skip.frontend}</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Copy the built bundle into the jar's static/ so Spring Boot serves it
+           at /. Runs after the build above, in the same phase order. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-frontend</id>
+            <phase>process-resources</phase>
+            <goals><goal>copy-resources</goal></goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${frontend.dir}/dist</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+              <skip>${skip.frontend}</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

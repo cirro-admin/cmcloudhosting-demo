@@ -1,0 +1,12 @@
+{
+  "name": "cmcloud/laravel-starter",
+  "description": "Minimal PHP app for the CM Cloud laravel runtime",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.2"
+  },
+  "config": {
+    "optimize-autoloader": true
+  }
+}
