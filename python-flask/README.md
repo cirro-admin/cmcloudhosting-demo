@@ -18,7 +18,7 @@ Runtime: **`python_flask`**
 | Subdirectory | `python-flask` |
 | Runtime | `python_flask` |
 | Build command | _(leave empty)_ |
-| Start command | `venv/bin/gunicorn app:app --bind 127.0.0.1:$PORT --workers 3` |
+| Start command | _(leave empty — gunicorn is started on your `Flask()` app for you)_ |
 | Health check path | `/_runtime/health` |
 
 3. Deploy, then open the app URL.
@@ -39,9 +39,10 @@ Runtime: **`python_flask`**
 
 ## Notes
 
-- **Set the Start command.** Without one the platform runs `python app.py`, which is
-  Flask's development server: one process, and not meant for production traffic.
-  gunicorn is in `requirements.txt` for that reason.
+- The platform serves the app with gunicorn and 3 workers. gunicorn is pinned in
+  `requirements.txt` here; if your own project leaves it out, it is installed for you.
+  To change the worker count, set a Start command such as
+  `venv/bin/gunicorn app:app --bind 127.0.0.1:$PORT --workers 5`.
 - The platform builds the venv and installs `requirements.txt` into it.
 - The app binds `127.0.0.1`, never `0.0.0.0`. The platform passes the port as `PORT`
   and nginx is the only thing reachable from outside.

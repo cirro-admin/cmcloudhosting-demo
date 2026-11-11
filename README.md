@@ -31,10 +31,9 @@ in the portal and the platform installs it for you.
    folder's README.
 5. Click **Redeploy App** and follow the deploy log.
 
-**Moving on to your own code.** The deploy form keeps Subdirectory and Start
-command from the last deploy; leaving a field empty does not clear it. When you
-switch Repository to your own project, type a single dot (`.`) in Subdirectory
-if your app sits at the root of your repository, and check the Start command.
+**Moving on to your own code.** Set Repository to your own project. If your app
+sits at the root of your repository, empty Subdirectory: emptying a saved field
+clears it. Your environment variables stay set.
 
 This repository is public, so no GitHub token is needed. For your own private
 repository, save a token with `repo` scope in Deploy settings first.

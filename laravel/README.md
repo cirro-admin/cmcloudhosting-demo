@@ -41,3 +41,10 @@ Runtime: **`laravel`**
 
 - `public/` is the document root, so nothing outside it is reachable over HTTP. Keep `.env` and `vendor/` above that directory, as Laravel already does.
 - Push a real Laravel repository over this one — `artisan` plus `public/index.php` — and the platform runs composer install for you.
+- For a real Laravel app the platform also builds the `.env` from your `.env.example`
+  with production defaults (`APP_ENV=production`, `APP_DEBUG=false`), keeps one
+  `APP_KEY` for the app across deploys, keeps the default SQLite database outside
+  the release, and runs `php artisan migrate --force` before traffic moves. A failed
+  migration stops the deploy and leaves the previous release serving.
+- For managed PostgreSQL set `DB_CONNECTION=pgsql` and `DB_URL` to the `DATABASE_URL`
+  from your service's Database tab.
